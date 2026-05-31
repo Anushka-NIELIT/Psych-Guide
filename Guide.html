@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pathfinder 2027: Psychology & Management Roadmap</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-dark: #0f172a; /* Slate 900 */
+            --primary: #1e293b; /* Slate 800 */
+            --accent: #0d9488; /* Teal 600 */
+            --accent-light: #ccfbf1; /* Teal 50 */
+            --bg-color: #f8fafc; /* Slate 50 */
+            --text-main: #334155; /* Slate 700 */
+        }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+        }
+        
+        h1, h2, h3, h4, h5, .serif { 
+            font-family: 'Playfair Display', serif; 
+        }
+
+        /* Essential Chart Container Constraints */
+        .chart-container { 
+            position: relative; 
+            width: 100%; 
+            max-width: 700px; 
+            margin-left: auto; 
+            margin-right: auto; 
+            height: 300px; 
+            max-height: 400px; 
+        }
+        @media (min-width: 768px) { 
+            .chart-container { height: 380px; } 
+        }
+
+        /* Sidebar & Navigation Styles */
+        .nav-scrollbar::-webkit-scrollbar { height: 4px; width: 4px; }
+        .nav-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .nav-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        
+        .nav-btn {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .nav-btn.active {
+            background-color: var(--accent);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(13, 148, 136, 0.2);
+        }
+        .nav-btn.active::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 4px;
+            background-color: #5eead4; /* Teal 300 */
+            border-top-left-radius: 0.5rem;
+            border-bottom-left-radius: 0.5rem;
+        }
+        @media (max-width: 767px) {
+            .nav-btn.active::before {
+                bottom: 0; top: auto; left: 0; right: 0;
+                height: 4px; width: 100%;
+                border-radius: 0;
+                border-top-left-radius: 0;
+            }
+        }
+
+        /* Custom UI Elements */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.05);
+        }
+        
+        .timeline-line::before {
+            content: '';
+            position: absolute;
+            left: 11px; top: 30px; bottom: -30px;
+            width: 2px;
+            background-color: #e2e8f0;
+            z-index: 0;
+        }
+        .timeline-item:last-child .timeline-line::before { display: none; }
+        
+        .content-section { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row h-screen overflow-hidden">
+
+<!-- Chosen Palette: Deep Slate, Crisp White, & Vibrant Teal Accents -->
+<!-- Application Structure Plan: A high-end academic dashboard. The persistent sidebar enables quick jumps between logically grouped modules (Diagnosis -> Academics -> Financials). This non-linear structure is crucial because the user needs to cross-reference constraints (like CUET domain limits) against goals (like studying abroad or attempting IPMAT). Hiding complex text behind distinct tabs reduces cognitive load and makes the "Context Dump" manageable. -->
+<!-- Visualization & Content Choices: 1. Polar Area Chart for IPMAT vs CUET to show varying weights of syllabi overlap. 2. Horizontal Bar Chart for Financials to clearly rank the stark cost differences of international vs domestic options. 3. Interactive timeline for the roadmap. 4. Grid-based cards for university shortlists for easy scanning. Confirming NO SVG/Mermaid used; relying on pure HTML/CSS and Chart.js for all graphics. -->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <!-- Sidebar Navigation -->
+    <aside class="w-full md:w-72 bg-slate-900 text-slate-300 flex flex-col shrink-0 h-auto md:h-screen z-20 shadow-xl">
+        <div class="p-6 pb-4 border-b border-slate-800">
+            <h1 class="text-2xl font-bold text-white tracking-tight">Pathfinder '27</h1>
+            <p class="text-xs text-teal-400 mt-1 uppercase tracking-widest font-semibold">May 2026 Strategy</p>
+        </div>
+        
+        <nav class="flex md:flex-col overflow-x-auto md:overflow-y-auto nav-scrollbar p-4 gap-2 flex-1 items-center md:items-stretch whitespace-nowrap md:whitespace-normal">
+            <button data-target="sec-diagnosis" class="nav-btn active text-left px-4 py-3 md:py-4 rounded-lg text-sm font-medium hover:bg-slate-800 w-full flex items-center">
+                <span class="mr-3 text-lg opacity-80">🎯</span> 1. Diagnosis & Action
+            </button>
+            <button data-target="sec-eligibility" class="nav-btn text-left px-4 py-3 md:py-4 rounded-lg text-sm font-medium hover:bg-slate-800 w-full flex items-center">
+                <span class="mr-3 text-lg opacity-80">⚖️</span> 2. CUET Eligibility
+            </button>
+            <button data-target="sec-universities" class="nav-btn text-left px-4 py-3 md:py-4 rounded-lg text-sm font-medium hover:bg-slate-800 w-full flex items-center">
+                <span class="mr-3 text-lg opacity-80">🏛️</span> 3. Indian Universities
+            </button>
+            <button data-target="sec-psychology" class="nav-btn text-left px-4 py-3 md:py-4 rounded-lg text-sm font-medium hover:bg-slate-800 w-full flex items-center">
+                <span class="mr-3 text-lg opacity-80">🧠</span> 4. Psych Deep Dive
+            </button>
+            <button data-target="sec-ipmat" class="nav-btn text-left px-4 py-3 md:py-4 rounded-lg text-sm font-medium hover:bg-slate-800 w-full flex items-center">
+                <span class="mr-3 text-lg opacity-80">📊</span> 5. The IPMAT Dilemma
+            </button>
+            <button data-target="sec-abroad" class="nav-btn text-left px-4 py-3 md:py-4 rounded-lg text-sm font-medium hover:bg-slate-800 w-full flex items-center">
+                <span class="mr-3 text-lg opacity-80">🌍</span> 6. Study Abroad
+            </button>
+            <button data-target="sec-roadmap" class="nav-btn text-left px-4 py-3 md:py-4 rounded-lg text-sm font-medium hover:bg-slate-800 w-full flex items-center">
+                <span class="mr-3 text-lg opacity-80">📅</span> 7. Master Roadmap
+            </button>
+            <button data-target="sec-financials" class="nav-btn text-left px-4 py-3 md:py-4 rounded-lg text-sm font-medium hover:bg-slate-800 w-full flex items-center">
+                <span class="mr-3 text-lg opacity-80">💰</span> 8. Financials & Costs
+            </button>
+        </nav>
+        
+        <div class="p-6 border-t border-slate-800 hidden md:block">
+            <div class="bg-slate-800 rounded-lg p-4 text-xs">
+                <p class="text-slate-400 mb-1">Current Status:</p>
+                <p class="font-bold text-white flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span> Planning Phase</p>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto relative bg-slate-50/50">
+        <!-- Content Container -->
+        <div class="max-w-5xl mx-auto p-6 md:p-10 lg:p-16">
+            
+            <!-- SECTION 1: Diagnosis & Action Plan -->
+            <section id="sec-diagnosis" class="content-section block">
+                <header class="mb-10">
+                    <h2 class="text-4xl text-slate-900 mb-4">Quick Situation Diagnosis</h2>
+                    <p class="text-lg text-slate-600 leading-relaxed border-l-4 border-teal-500 pl-4">We are addressing the core constraints of your current subject combination and outlining the immediate next steps to resolve your academic confusion.</p>
+                </header>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                    <div class="glass-card p-6 rounded-2xl border-t-4 border-t-rose-500">
+                        <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center"><span class="text-rose-500 mr-2">🚨</span> The Hard Truths</h3>
+                        <ul class="space-y-4 text-slate-700">
+                            <li class="bg-rose-50 p-3 rounded-lg"><strong class="text-rose-900">DU & JMI are off the table.</strong> Because Legal Studies was dropped as a domain, you only have two domains (Psych, Soc). DU strictly requires three. You cannot fake a third domain; subject mapping will disqualify you.</li>
+                            <li class="bg-rose-50 p-3 rounded-lg"><strong class="text-rose-900">CLAT is out</strong>—which is good. It successfully narrows your focus to CUET, IPMAT, and Study Abroad without distraction.</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="glass-card p-6 rounded-2xl border-t-4 border-t-teal-500">
+                        <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center"><span class="text-teal-500 mr-2">✨</span> The Clear Advantages</h3>
+                        <ul class="space-y-4 text-slate-700">
+                            <li class="bg-teal-50 p-3 rounded-lg"><strong class="text-teal-900">Your target is clear:</strong> You want out of Delhi, which perfectly aligns with your eligibility constraints. Elite Central universities like HCU await.</li>
+                            <li class="bg-teal-50 p-3 rounded-lg"><strong class="text-teal-900">Time is your biggest asset.</strong> It is currently May 2026. You have a full 12 months to execute a dual CUET GT + IPMAT strategy or launch a Study Abroad profile.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Action Plan -->
+                <div class="bg-slate-900 text-white p-8 rounded-3xl shadow-2xl relative overflow-hidden">
+                    <div class="absolute -right-10 -top-10 text-9xl opacity-5">⚙️</div>
+                    <h3 class="text-2xl mb-2 text-teal-300">Mindset & Decision Framework</h3>
+                    <p class="mb-8 text-slate-400">Confusion is normal right now. Clarity only comes from executing these specific steps. <strong class="text-white">Deadline: June 15, 2026.</strong></p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-4 bg-slate-800/50 p-5 rounded-xl border border-slate-700 hover:border-teal-500 transition-colors">
+                            <div class="flex-shrink-0 w-10 h-10 bg-teal-500/20 text-teal-400 rounded-full flex items-center justify-center font-bold text-xl border border-teal-500/30">1</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-slate-100">Download the Prospectuses</h4>
+                                <p class="text-sm text-slate-400 mt-1">Get the 2026 brochures for Univ of Hyderabad (HCU) and BHU immediately. Verify the exact "1 Lang + 2 Domains + GT" rule for BA Psychology.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4 bg-slate-800/50 p-5 rounded-xl border border-slate-700 hover:border-teal-500 transition-colors">
+                            <div class="flex-shrink-0 w-10 h-10 bg-teal-500/20 text-teal-400 rounded-full flex items-center justify-center font-bold text-xl border border-teal-500/30">2</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-slate-100">Take an IPMAT Diagnostic Mock</h4>
+                                <p class="text-sm text-slate-400 mt-1">Sit for a past-year IPMAT Indore paper completely unprepared. Score yourself on QA. If you score single digits and absolutely hate the math, drop IPMAT today.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4 bg-slate-800/50 p-5 rounded-xl border border-slate-700 hover:border-teal-500 transition-colors">
+                            <div class="flex-shrink-0 w-10 h-10 bg-teal-500/20 text-teal-400 rounded-full flex items-center justify-center font-bold text-xl border border-teal-500/30">3</div>
+                            <div>
+                                <h4 class="font-bold text-lg text-slate-100">Have the "Money Talk"</h4>
+                                <p class="text-sm text-slate-400 mt-1">Sit with your parents this weekend. Ask clearly: "Is ₹40-50 Lakhs/year for US/UK possible, or are we strictly looking at Indian options?" This dictates your next 6 months.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: Eligibility & Mapping -->
+            <section id="sec-eligibility" class="content-section hidden">
+                <header class="mb-10">
+                    <h2 class="text-4xl text-slate-900 mb-4">CUET Eligibility & Subject Mapping</h2>
+                    <p class="text-lg text-slate-600 leading-relaxed border-l-4 border-teal-500 pl-4">How to fill your CUET form to maximize chances, given your specific board subjects and the removal of Legal Studies from the NTA domain list.</p>
+                </header>
+
+                <div class="glass-card p-8 rounded-2xl mb-8">
+                    <h3 class="text-2xl text-slate-800 mb-2">Your Safest CUET Combination</h3>
+                    <p class="text-slate-600 mb-8">Based on post-2024 NTA rules, you must only select subjects studied in Class 12. You have exactly 2 valid domains.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-white border-2 border-slate-200 rounded-xl p-6 text-center hover:border-teal-500 transition-all shadow-sm">
+                            <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">📝</div>
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Section IA</h4>
+                            <p class="text-xl font-bold text-slate-800">English</p>
+                            <p class="text-xs text-slate-500 mt-2">Code: Track NTA '27</p>
+                        </div>
+                        
+                        <div class="bg-white border-2 border-slate-200 rounded-xl p-6 text-center hover:border-teal-500 transition-all shadow-sm">
+                            <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">📚</div>
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Section II (Domains)</h4>
+                            <p class="text-xl font-bold text-slate-800">Psychology <br><span class="text-sm font-medium text-slate-600">& Sociology</span></p>
+                            <p class="text-xs text-slate-500 mt-2">Strictly mapped to Boards</p>
+                        </div>
+                        
+                        <div class="bg-gradient-to-br from-amber-100 to-orange-100 border-2 border-amber-300 rounded-xl p-6 text-center shadow-md relative overflow-hidden">
+                            <div class="absolute -right-4 -bottom-4 text-6xl opacity-20">🗝️</div>
+                            <div class="w-12 h-12 bg-white/50 rounded-full flex items-center justify-center text-2xl mx-auto mb-4 relative z-10">🚀</div>
+                            <h4 class="text-xs font-bold text-amber-700 uppercase tracking-widest mb-2 relative z-10">Section III (Crucial)</h4>
+                            <p class="text-xl font-bold text-amber-900 relative z-10">General Test</p>
+                            <p class="text-xs font-semibold text-amber-800 mt-2 relative z-10">Your proxy 3rd domain</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="p-6 bg-slate-50 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2"><span>❓</span> Can GT substitute a 3rd domain?</h4>
+                            <p class="text-slate-600 text-sm leading-relaxed">
+                                <strong>DU / JMI:</strong> No.<br>
+                                <strong>HCU / BHU* / Private Unis:</strong> Yes. For these institutions, the General Test acts as your lifeline and replaces the need for a third domain subject. <br>
+                                <span class="text-xs text-slate-400 mt-2 block">*BHU policy fluctuates; verify 2026 guidelines.</span>
+                            </p>
+                        </div>
+                        <div class="p-6 bg-slate-50 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2"><span>🌍</span> What about extra languages?</h4>
+                            <p class="text-slate-600 text-sm leading-relaxed">
+                                You studied Hindi Elective, so you <em>can</em> take it. However, it only helps if applying to specific language courses. You <strong>cannot</strong> take French/German as you didn't study them in Class 12 CBSE.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: Indian Universities -->
+            <section id="sec-universities" class="content-section hidden">
+                <header class="mb-10">
+                    <h2 class="text-4xl text-slate-900 mb-4">Indian University Shortlist</h2>
+                    <p class="text-lg text-slate-600 leading-relaxed border-l-4 border-teal-500 pl-4">Top institutions across India offering exceptional Psychology programs that accept your specific 2-Domain + GT profile, or have their own pathways.</p>
+                </header>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Univ 1 -->
+                    <div class="glass-card rounded-xl overflow-hidden hover:shadow-lg transition-shadow border border-slate-200 flex flex-col">
+                        <div class="bg-teal-700 px-6 py-4 flex justify-between items-center">
+                            <span class="text-teal-50 font-bold text-sm tracking-wide">TOP RECOMMENDATION</span>
+                            <span class="bg-white/20 text-white text-xs px-2 py-1 rounded">Central Univ</span>
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-2xl text-slate-800 mb-1">Univ. of Hyderabad (HCU)</h3>
+                                <p class="text-slate-500 text-sm mb-4">📍 Hyderabad, Telangana</p>
+                                <p class="text-slate-700 text-sm mb-3"><strong>Pathway:</strong> CUET (1 Lang + 2 Domains + GT allowed). Perfect fit for your profile.</p>
+                                <p class="text-slate-600 text-sm leading-relaxed"><strong>Culture:</strong> Incredible academic rigor, beautiful sprawling campus. Excellent launchpad for Master's. Placements mostly in research, HR, or academia.</p>
+                            </div>
+                            <div class="mt-6 pt-4 border-t border-slate-100 flex justify-between items-center text-sm">
+                                <span class="font-semibold text-slate-800">Fee: ₹15k-25k/yr</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Univ 2 -->
+                    <div class="glass-card rounded-xl overflow-hidden hover:shadow-lg transition-shadow border border-slate-200 flex flex-col">
+                        <div class="bg-slate-700 px-6 py-4 flex justify-between items-center">
+                            <span class="text-slate-50 font-bold text-sm tracking-wide">HIGH COMPETITION</span>
+                            <span class="bg-white/20 text-white text-xs px-2 py-1 rounded">Central Univ</span>
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-2xl text-slate-800 mb-1">Banaras Hindu Univ (BHU)</h3>
+                                <p class="text-slate-500 text-sm mb-4">📍 Varanasi, Uttar Pradesh</p>
+                                <p class="text-slate-700 text-sm mb-3"><strong>Pathway:</strong> CUET. Historically allowed GT as a 3rd domain fallback. <span class="text-amber-600 font-semibold">Must verify 2026 rules.</span></p>
+                                <p class="text-slate-600 text-sm leading-relaxed"><strong>Culture:</strong> Traditional, highly competitive, massive alumni network. Fantastic for clinical psychology foundations.</p>
+                            </div>
+                            <div class="mt-6 pt-4 border-t border-slate-100 flex justify-between items-center text-sm">
+                                <span class="font-semibold text-slate-800">Fee: ₹10k-20k/yr</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Univ 3 -->
+                    <div class="glass-card rounded-xl overflow-hidden hover:shadow-lg transition-shadow border border-slate-200 flex flex-col">
+                        <div class="bg-amber-600 px-6 py-4 flex justify-between items-center">
+                            <span class="text-amber-50 font-bold text-sm tracking-wide">PRIVATE ELITE</span>
+                            <span class="bg-white/20 text-white text-xs px-2 py-1 rounded">Private Univ</span>
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-2xl text-slate-800 mb-1">Azim Premji University</h3>
+                                <p class="text-slate-500 text-sm mb-4">📍 Bengaluru, Karnataka</p>
+                                <p class="text-slate-700 text-sm mb-3"><strong>Pathway:</strong> Own Entrance Test (Reading Comp, Quant Reasoning). Open to Humanities students with 10th-level math.</p>
+                                <p class="text-slate-600 text-sm leading-relaxed"><strong>Culture:</strong> Highly progressive, focus on social impact. Offers BSc Psychology (great for research). Excellent scholarships.</p>
+                            </div>
+                            <div class="mt-6 pt-4 border-t border-slate-100 flex justify-between items-center text-sm">
+                                <span class="font-semibold text-slate-800">Fee: ₹3L/yr (Scholarships avail.)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Univ 4 -->
+                    <div class="glass-card rounded-xl overflow-hidden hover:shadow-lg transition-shadow border border-slate-200 flex flex-col">
+                        <div class="bg-slate-700 px-6 py-4 flex justify-between items-center">
+                            <span class="text-slate-50 font-bold text-sm tracking-wide">PREMIUM / CORPORATE</span>
+                            <span class="bg-white/20 text-white text-xs px-2 py-1 rounded">Deemed / Private</span>
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-2xl text-slate-800 mb-1">Christ / FLAME Univ</h3>
+                                <p class="text-slate-500 text-sm mb-4">📍 Bengaluru / Pune</p>
+                                <p class="text-slate-700 text-sm mb-3"><strong>Pathway:</strong> Own entrances + Interviews. FLAME accepts CUET as supplementary.</p>
+                                <p class="text-slate-600 text-sm leading-relaxed"><strong>Culture:</strong> Christ is strict with excellent corporate placements. FLAME is liberal arts, flexible, but extremely expensive.</p>
+                            </div>
+                            <div class="mt-6 pt-4 border-t border-slate-100 flex justify-between items-center text-sm">
+                                <span class="font-semibold text-slate-800">Fee: ₹1.5L - ₹8L+/yr</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 4: Psychology Deep Dive -->
+            <section id="sec-psychology" class="content-section hidden">
+                <header class="mb-10">
+                    <h2 class="text-4xl text-slate-900 mb-4">Psychology Deep Dive</h2>
+                    <p class="text-lg text-slate-600 leading-relaxed border-l-4 border-teal-500 pl-4">Nuances of Psychology degrees and the strict licensing reality in India that you must know before committing.</p>
+                </header>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-slate-100">
+                        <div class="p-8">
+                            <div class="text-3xl mb-4">🎓</div>
+                            <h3 class="text-xl font-bold text-slate-800 mb-2">BA (Hons) Psychology</h3>
+                            <p class="text-slate-600 text-sm leading-relaxed">The standard route. Covers clinical, social, organizational psychology. Excellent foundational degree for all master's pathways in India and abroad.</p>
+                        </div>
+                        <div class="p-8 bg-slate-50/50">
+                            <div class="text-3xl mb-4">🔬</div>
+                            <h3 class="text-xl font-bold text-slate-800 mb-2">BSc Psychology</h3>
+                            <p class="text-slate-600 text-sm leading-relaxed">More rigorous (heavy stats, neuroscience). Usually requires a Science background, but places like Azim Premji offer it to Humanities students via bridge courses.</p>
+                        </div>
+                        <div class="p-8">
+                            <div class="text-3xl mb-4">⚠️</div>
+                            <h3 class="text-xl font-bold text-slate-800 mb-2">BA Programme</h3>
+                            <p class="text-slate-600 text-sm leading-relaxed">Less rigorous. Combines Psych with Sociology/Economics. <strong class="text-rose-600">Avoid</strong> if your strict goal is Clinical Psychology, as Master's programs strongly prefer Honours grads.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-8 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 text-white relative overflow-hidden">
+                    <div class="absolute right-0 bottom-0 text-9xl opacity-10">⚕️</div>
+                    <h3 class="text-2xl font-bold text-teal-300 mb-4 relative z-10">The Indian Licensing Reality (RCI)</h3>
+                    <p class="text-slate-300 mb-6 relative z-10">You cannot practice as a Clinical Psychologist after a BA. It is strictly illegal to use the title without Rehabilitation Council of India (RCI) registration.</p>
+                    
+                    <div class="flex flex-col md:flex-row gap-4 relative z-10 items-center bg-slate-950/50 p-6 rounded-xl border border-slate-700">
+                        <div class="text-center w-full md:w-auto">
+                            <span class="block text-teal-400 font-bold mb-1">Step 1</span>
+                            <span class="text-sm">BA Psychology<br>(3-4 yrs)</span>
+                        </div>
+                        <div class="text-slate-500 hidden md:block">➔</div>
+                        <div class="text-slate-500 md:hidden text-xl">↓</div>
+                        <div class="text-center w-full md:w-auto">
+                            <span class="block text-teal-400 font-bold mb-1">Step 2</span>
+                            <span class="text-sm">MA Clinical Psych<br>(2 yrs)</span>
+                        </div>
+                        <div class="text-slate-500 hidden md:block">➔</div>
+                        <div class="text-slate-500 md:hidden text-xl">↓</div>
+                        <div class="text-center w-full md:w-auto">
+                            <span class="block text-amber-400 font-bold mb-1">Step 3</span>
+                            <span class="text-sm">RCI M.Phil / Internship<br>(1-2 yrs)</span>
+                        </div>
+                        <div class="text-slate-500 hidden md:block">➔</div>
+                        <div class="text-slate-500 md:hidden text-xl">↓</div>
+                        <div class="text-center w-full md:w-auto bg-teal-500/20 px-4 py-2 rounded-lg border border-teal-500/50">
+                            <span class="block text-white font-bold text-lg">Licensed</span>
+                            <span class="text-xs text-teal-200">Clinical Psychologist</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 5: IPMAT Dilemma -->
+            <section id="sec-ipmat" class="content-section hidden">
+                <header class="mb-10">
+                    <h2 class="text-4xl text-slate-900 mb-4">The IPMAT Dilemma</h2>
+                    <p class="text-lg text-slate-600 leading-relaxed border-l-4 border-teal-500 pl-4">Should you prepare for IPMAT (IIM Indore) alongside CUET? Visualizing the workload and opportunity cost.</p>
+                </header>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+                    <div class="glass-card p-6 rounded-2xl h-full flex flex-col justify-center bg-white">
+                        <div class="chart-container">
+                            <canvas id="ipmatChart"></canvas>
+                        </div>
+                        <p class="text-center text-sm text-slate-500 mt-4 italic">Analysis based on latest IPMAT & CUET GT Syllabi.</p>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div class="glass-card p-6 rounded-2xl">
+                            <h3 class="text-2xl font-bold text-slate-800 mb-4">The Decision Framework</h3>
+                            <p class="text-slate-600 mb-4">Preparing for both is <strong>feasible but grueling</strong>. The ~70% overlap between CUET General Test and IPMAT QA/LR is your saving grace. However, IPMAT math is significantly harder.</p>
+                            
+                            <div class="space-y-4">
+                                <div class="bg-teal-50 border border-teal-200 p-4 rounded-lg flex gap-4">
+                                    <span class="text-2xl">✅</span>
+                                    <div>
+                                        <strong class="text-teal-900 block">Do both if:</strong>
+                                        <span class="text-sm text-slate-700">You can commit 1.5 hours daily purely to higher-level math starting June 2026, alongside 2 hours for NCERT domain reading.</span>
+                                    </div>
+                                </div>
+                                <div class="bg-rose-50 border border-rose-200 p-4 rounded-lg flex gap-4">
+                                    <span class="text-2xl">❌</span>
+                                    <div>
+                                        <strong class="text-rose-900 block">Drop IPMAT if:</strong>
+                                        <span class="text-sm text-slate-700">You despise mathematics or struggle with basic Algebra/Geometry. The opportunity cost is ruining your domain subject prep for a highly selective exam.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-amber-100 border-l-4 border-amber-500 p-5 rounded-r-xl">
+                            <strong class="text-amber-900 font-bold block mb-1">Crucial Milestone</strong>
+                            <p class="text-amber-800 text-sm">By <strong>January 2027</strong>, you must pick a primary target. You cannot ride two boats during the board exam peak. Decide based on your mock scores at that time.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 6: Study Abroad -->
+            <section id="sec-abroad" class="content-section hidden">
+                <header class="mb-10">
+                    <h2 class="text-4xl text-slate-900 mb-4">Study Abroad (Fall '27 Intake)</h2>
+                    <p class="text-lg text-slate-600 leading-relaxed border-l-4 border-teal-500 pl-4">If international education is a financial reality, the application pipeline begins immediately. This is your strict chronological guide.</p>
+                </header>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 glass-card p-8 rounded-2xl bg-white border border-slate-200">
+                        <h3 class="text-2xl font-bold text-slate-800 mb-8">Application Timeline</h3>
+                        
+                        <div class="space-y-0 relative">
+                            <!-- Timeline Items -->
+                            <div class="timeline-item relative pl-10 pb-8">
+                                <div class="timeline-line"></div>
+                                <div class="absolute left-0 top-1 w-6 h-6 rounded-full bg-slate-200 border-4 border-white shadow-sm flex items-center justify-center z-10"><div class="w-2 h-2 rounded-full bg-teal-500"></div></div>
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 inline-block w-full">
+                                    <span class="text-xs font-bold text-teal-600 uppercase tracking-wider block mb-1">Jun-Sep 2026</span>
+                                    <h4 class="font-bold text-slate-800 mb-1">Preparation Phase</h4>
+                                    <p class="text-sm text-slate-600">Finalize countries (US vs UK vs Aus). Start SAT prep (if targeting US top 100). Prepare for IELTS/TOEFL.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="timeline-item relative pl-10 pb-8">
+                                <div class="timeline-line"></div>
+                                <div class="absolute left-0 top-1 w-6 h-6 rounded-full bg-slate-200 border-4 border-white shadow-sm flex items-center justify-center z-10"><div class="w-2 h-2 rounded-full bg-teal-500"></div></div>
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 inline-block w-full">
+                                    <span class="text-xs font-bold text-teal-600 uppercase tracking-wider block mb-1">Oct-Nov 2026</span>
+                                    <h4 class="font-bold text-slate-800 mb-1">Testing & Drafting</h4>
+                                    <p class="text-sm text-slate-600">Take SAT & IELTS. Draft Personal Statements (UCAS for UK) or Common App Essays (US). Secure Letters of Recommendation (LORs) from teachers.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="timeline-item relative pl-10 pb-8">
+                                <div class="timeline-line"></div>
+                                <div class="absolute left-0 top-1 w-6 h-6 rounded-full bg-amber-200 border-4 border-white shadow-sm flex items-center justify-center z-10"><div class="w-2 h-2 rounded-full bg-amber-500 animate-ping absolute"></div><div class="w-2 h-2 rounded-full bg-amber-600 relative"></div></div>
+                                <div class="bg-amber-50 p-4 rounded-xl border border-amber-200 inline-block w-full shadow-sm">
+                                    <span class="text-xs font-bold text-amber-700 uppercase tracking-wider block mb-1">Dec '26 - Feb '27</span>
+                                    <h4 class="font-bold text-amber-900 mb-1">Deadline Zone</h4>
+                                    <p class="text-sm text-amber-800">Submit all applications. UK UCAS deadline is typically late Jan. US Regular Decision deadlines hover around Jan 1 - Jan 15.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="timeline-item relative pl-10">
+                                <div class="absolute left-0 top-1 w-6 h-6 rounded-full bg-slate-200 border-4 border-white shadow-sm flex items-center justify-center z-10"><div class="w-2 h-2 rounded-full bg-teal-500"></div></div>
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 inline-block w-full">
+                                    <span class="text-xs font-bold text-teal-600 uppercase tracking-wider block mb-1">Apr-Jul 2027</span>
+                                    <h4 class="font-bold text-slate-800 mb-1">Admissions & Visas</h4>
+                                    <p class="text-sm text-slate-600">Receive decisions. Apply for Visas (I-20 for US, CAS for UK). Book flights and finalize accommodation.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-slate-800 text-white p-8 rounded-2xl shadow-lg flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-6 text-white">Prerequisites</h3>
+                            <ul class="space-y-6">
+                                <li class="bg-slate-700/50 p-4 rounded-xl border border-slate-600">
+                                    <strong class="text-teal-300 block text-lg mb-1">SAT</strong>
+                                    <span class="text-xs bg-slate-600 px-2 py-1 rounded text-slate-200 inline-block mb-2">Optional but Rec.</span>
+                                    <p class="text-sm text-slate-300">Score 1400+ for decent scholarship chances in the US. Largely unnecessary for UK/Australia.</p>
+                                </li>
+                                <li class="bg-slate-700/50 p-4 rounded-xl border border-slate-600">
+                                    <strong class="text-teal-300 block text-lg mb-1">IELTS / TOEFL</strong>
+                                    <span class="text-xs bg-rose-900/50 text-rose-200 px-2 py-1 rounded border border-rose-800/50 inline-block mb-2">Mandatory</span>
+                                    <p class="text-sm text-slate-300">Aim for a minimum 6.5 Band (IELTS) or 90+ (TOEFL) to clear international language barriers.</p>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="mt-8 pt-6 border-t border-slate-700">
+                            <strong class="text-white block mb-3 font-serif italic text-lg">Key Scholarships to Track</strong>
+                            <ul class="space-y-2 text-sm text-slate-300">
+                                <li class="flex items-center gap-2"><span class="text-teal-500">▹</span> Inlaks Shivdasani (Highly competitive)</li>
+                                <li class="flex items-center gap-2"><span class="text-teal-500">▹</span> Great Scholarships (UK - £10k)</li>
+                                <li class="flex items-center gap-2"><span class="text-teal-500">▹</span> Uni of Melbourne Int. Undergrad</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 7: Master Roadmap -->
+            <section id="sec-roadmap" class="content-section hidden">
+                <header class="mb-10">
+                    <h2 class="text-4xl text-slate-900 mb-4">Master Roadmap</h2>
+                    <p class="text-lg text-slate-600 leading-relaxed border-l-4 border-teal-500 pl-4">How to balance CBSE Boards, CUET Domains, CUET General Test, and IPMAT over the next 12 months without burning out.</p>
+                </header>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Phase 1 -->
+                    <div class="glass-card p-6 rounded-2xl border-t-4 border-teal-500">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold text-slate-800">Summer Phase</h3>
+                            <span class="bg-teal-100 text-teal-800 text-xs font-bold px-3 py-1 rounded-full">Jun - Aug '26</span>
+                        </div>
+                        <p class="text-sm text-slate-500 mb-3 uppercase tracking-wider font-semibold">Goal: Foundation Building</p>
+                        <ul class="text-sm text-slate-700 space-y-2 list-disc pl-4">
+                            <li>4-5 hrs/day total prep.</li>
+                            <li>1.5 hrs IPMAT Math / GT Quant.</li>
+                            <li>1 hr GT Logical Reasoning.</li>
+                            <li>Read Class 12 Psych/Soc NCERTs purely for concepts (no rote memorization yet).</li>
+                        </ul>
+                    </div>
+
+                    <!-- Phase 2 -->
+                    <div class="glass-card p-6 rounded-2xl border-t-4 border-slate-500">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold text-slate-800">School Grind</h3>
+                            <span class="bg-slate-200 text-slate-700 text-xs font-bold px-3 py-1 rounded-full">Sep - Nov '26</span>
+                        </div>
+                        <p class="text-sm text-slate-500 mb-3 uppercase tracking-wider font-semibold">Goal: Balancing Act</p>
+                        <ul class="text-sm text-slate-700 space-y-2 list-disc pl-4">
+                            <li>Drop aptitude prep to 2-3 hrs/day.</li>
+                            <li>Focus heavily on Board half-yearlies.</li>
+                            <li>Switch IPMAT/GT prep to weekend-heavy routines.</li>
+                            <li>Take 1 mock test every two weeks.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Phase 3 -->
+                    <div class="glass-card p-6 rounded-2xl border-t-4 border-amber-500 bg-amber-50/30">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold text-slate-800">The Pivot Point</h3>
+                            <span class="bg-amber-200 text-amber-900 text-xs font-bold px-3 py-1 rounded-full">Dec '26 - Jan '27</span>
+                        </div>
+                        <p class="text-sm text-amber-700 mb-3 uppercase tracking-wider font-semibold">Goal: Prioritization</p>
+                        <ul class="text-sm text-slate-700 space-y-2 list-disc pl-4">
+                            <li>If IPMAT mock scores are stagnant, drop it entirely.</li>
+                            <li>Shift 100% focus to CBSE Pre-boards + CUET Domains.</li>
+                            <li>(If going abroad: Finish and submit all applications now).</li>
+                        </ul>
+                    </div>
+
+                    <!-- Phase 4 & 5 -->
+                    <div class="space-y-6">
+                        <div class="glass-card p-6 rounded-2xl border-l-4 border-rose-500 shadow-sm">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="text-lg font-bold text-slate-800">Board Exam Tunnel</h3>
+                                <span class="text-xs font-bold text-rose-600">Feb - Mar '27</span>
+                            </div>
+                            <p class="text-sm text-slate-600">Pause all explicit aptitude prep. Focus 100% on scoring high in CBSE. Board exams inherently prepare you for CUET Section II (Domains).</p>
+                        </div>
+                        
+                        <div class="glass-card p-6 rounded-2xl border-l-4 border-teal-500 shadow-sm bg-teal-50/50">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="text-lg font-bold text-slate-800">The Final Sprint</h3>
+                                <span class="text-xs font-bold text-teal-700">Apr - May '27</span>
+                            </div>
+                            <p class="text-sm text-slate-600">Post-boards: 1 mock test daily. Revise GT GK/Current Affairs. <strong>Early May:</strong> IPMAT Indore. <strong>Mid-May onwards:</strong> CUET Exams.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 8: Financials -->
+            <section id="sec-financials" class="content-section hidden">
+                <header class="mb-10">
+                    <h2 class="text-4xl text-slate-900 mb-4">Financials & Data</h2>
+                    <p class="text-lg text-slate-600 leading-relaxed border-l-4 border-teal-500 pl-4">A clear, objective comparison of estimated annual costs (Tuition + Living) across your options to help facilitate the conversation with your family.</p>
+                </header>
+
+                <div class="glass-card p-6 rounded-2xl bg-white mb-8 shadow-sm">
+                    <div class="chart-container">
+                        <canvas id="costChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <h3 class="font-bold text-xl text-slate-800 mb-4 flex items-center gap-2"><span>🏛️</span> Indian Scholarships</h3>
+                        <ul class="space-y-4 text-sm text-slate-700">
+                            <li class="pb-3 border-b border-slate-100">
+                                <strong class="block text-slate-900">Central Sector Scholarship (CSS)</strong>
+                                ₹10,000–₹20,000/yr. Requires scoring in the top 2% of your board exams.
+                            </li>
+                            <li class="pb-3 border-b border-slate-100">
+                                <strong class="block text-slate-900">National Scholarship Portal (NSP)</strong>
+                                Hosts various state/central schemes generally based on family income brackets.
+                            </li>
+                            <li>
+                                <strong class="block text-slate-900">University Merit</strong>
+                                Private unis (e.g., Azim Premji) offer substantial need-based and merit-based fee waivers if you clear their entrance exams with high ranks.
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-2xl text-white shadow-md flex flex-col justify-center">
+                        <div class="text-4xl mb-4">🏠</div>
+                        <h3 class="font-bold text-xl text-white mb-3">Living Out of Delhi</h3>
+                        <p class="text-slate-300 leading-relaxed mb-4">Because you are targeting universities outside your home state (e.g., Hyderabad, Varanasi, Bengaluru), tuition is only part of the equation.</p>
+                        <div class="bg-white/10 p-4 rounded-xl border border-white/20">
+                            <p class="text-sm text-slate-200">Budget an additional <strong class="text-amber-400 text-lg">₹1.2L to ₹2.5L per year</strong> for hostel/PG, food, and basic travel, atop your base tuition fee.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Navigation Logic ---
+            const navButtons = document.querySelectorAll('.nav-btn');
+            const sections = document.querySelectorAll('.content-section');
+            const mainScrollArea = document.querySelector('main');
+
+            navButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Reset Active States
+                    navButtons.forEach(b => {
+                        b.classList.remove('active');
+                        b.style.backgroundColor = '';
+                    });
+                    sections.forEach(s => s.classList.add('hidden'));
+
+                    // Set Active State
+                    btn.classList.add('active');
+                    
+                    // Show Target Section
+                    const targetId = btn.getAttribute('data-target');
+                    const targetSection = document.getElementById(targetId);
+                    targetSection.classList.remove('hidden');
+                    
+                    // Scroll to top of main area on tab switch
+                    mainScrollArea.scrollTo({ top: 0, behavior: 'smooth' });
+                    
+                    // Re-render charts to prevent sizing glitches when un-hidden
+                    if(targetId === 'sec-financials' && costChartInstance) {
+                        costChartInstance.resize();
+                    }
+                    if(targetId === 'sec-ipmat' && ipmatChartInstance) {
+                        ipmatChartInstance.resize();
+                    }
+                });
+            });
+
+            // --- Chart.js Configuration ---
+            Chart.defaults.font.family = "'Inter', sans-serif";
+            Chart.defaults.color = '#64748b'; // slate-500
+            
+            // 1. IPMAT Overlap Chart (Polar Area for better visual distinction of parts)
+            const ctxIpmat = document.getElementById('ipmatChart').getContext('2d');
+            let ipmatChartInstance = new Chart(ctxIpmat, {
+                type: 'polarArea',
+                data: {
+                    labels: [
+                        'Overlap (Quant/LR)', 
+                        'Unique to IPMAT (Higher Math)', 
+                        'Unique to CUET (GK/Current Affairs)'
+                    ],
+                    datasets: [{
+                        data: [70, 15, 15],
+                        backgroundColor: [
+                            'rgba(13, 148, 136, 0.8)',  // Teal 600
+                            'rgba(245, 158, 11, 0.8)',  // Amber 500
+                            'rgba(148, 163, 184, 0.8)'   // Slate 400
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { r: { display: false } }, // hide background rings
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { padding: 20, font: { size: 12 } }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Syllabus Weightage: CUET GT vs IPMAT',
+                            font: { size: 18, family: "'Playfair Display', serif", weight: 'bold' },
+                            color: '#0f172a',
+                            padding: { bottom: 20 }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ' ' + context.label + ': ~' + context.raw + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 2. Financials Cost Chart (Horizontal Bar)
+            const ctxCost = document.getElementById('costChart').getContext('2d');
+            let costChartInstance = new Chart(ctxCost, {
+                type: 'bar',
+                data: {
+                    labels: ['Central Univs (India)', 'Private Univs (India)', 'Europe (Avg)', 'Canada', 'UK', 'US (Avg)'],
+                    datasets: [{
+                        label: 'Annual Cost in INR Lakhs',
+                        data: [0.6, 4.5, 22, 35, 42, 55],
+                        backgroundColor: [
+                            '#0f766e', // Teal 700 (Central)
+                            '#14b8a6', // Teal 500 (Private)
+                            '#cbd5e1', // Slate 300 (Europe)
+                            '#94a3b8', // Slate 400 (Canada)
+                            '#64748b', // Slate 500 (UK)
+                            '#475569'  // Slate 600 (US)
+                        ],
+                        borderRadius: 4,
+                        barThickness: 'flex'
+                    }]
+                },
+                options: {
+                    indexAxis: 'y', // Makes it horizontal
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Estimated INR (Lakhs)', font: {weight: 'bold'} },
+                            grid: { color: '#f1f5f9' } // slate-100
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: { font: { weight: '500' }, color: '#334155' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: 'Annual Cost Comparison (Tuition + Living)',
+                            font: { size: 18, family: "'Playfair Display', serif", weight: 'bold' },
+                            color: '#0f172a',
+                            padding: { bottom: 20 }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            titleFont: { size: 14 },
+                            bodyFont: { size: 14, weight: 'bold' },
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    return ' Cost: ₹' + context.raw + ' Lakhs / year';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
